@@ -11,6 +11,8 @@ execute:
   warning: false # use this to make sure warnings don't show upl
 ---
 
+[deployed html url]https://valecarov.github.io/workshop-08_winter-2026/code/workshop-code.html
+
 In this workshop, we will answer the question: How do specific leaf area, water treatment, and species influence plant mass?  
 
 **Specific leaf area** is a continuous variable measured in cm^2^/g.  
@@ -158,6 +160,17 @@ Label the axes with units where appropriate.
 Add a title describing the relationship (e.g. as SLA increases, total mass ______). 
 
 
+```{r}
+
+ggplot(data = drought_exp_clean,
+      aes(x = sla,
+          y = total_g)) +
+  geom_point() +
+  labs(x = "Specific Leaf Area cm\u00B2/(g)",
+       y = "Total Mass (g)",
+       title = "As SLA increases, total mass increases")
+
+```
 
 
 
@@ -171,6 +184,26 @@ Add a title describing the differences in (mean or median) plant mass between wa
 
 
 
+```{r}
+
+ggplot(data = drought_exp_clean,
+       aes(x = water_treatment,
+           y = total_g,
+           color = water_treatment)) +
+  geom_jitter(height = 0,
+              width = 0.3) +
+  scale_color_manual(values = c(
+    "Drought stressed" = ds_col,
+    "Well watered" = ww_col
+  )) +
+  labs(x = "Water Treatment",
+       y = "Total Mass (g)",
+       title = "Well watered plants tend to have higher mass") +
+  theme(legend.position = "none",
+        plot.title.position = "plot")
+  
+
+```
 
 
 
@@ -187,6 +220,30 @@ Bonus: order the x-axis by decreasing mean plant mass _and_ wrap the long specie
 
 
 
+```{r}
+
+ggplot(data = drought_exp_clean,
+       aes(x = reorder(species_name,-total_g),
+           y = total_g,
+           color = species_name)) +
+  geom_jitter(height = 0,
+              width = 0.2) + 
+  scale_color_manual(values = c(
+     "Lotus scoparius" = lotsco_col,
+     "Penstemon centranthifolius" = pencen_col,
+     "Salvia leucophylla" = salleu_col,
+     "Encelia californica" = enccal_col,
+     "Stipa pulchra" = stipul_col,
+     "Eschscholzia californica" = esccal_col,
+     "Grindelia camporum" = gricam_col
+  )) +
+  scale_x_discrete(labels = label_wrap(10)) +
+  labs(x = "Species Name",
+       y = "Total Mass (g)",
+       title = "Plant mass differs across species") +
+  theme(legend.position = "none")
+
+```
 
 
 
