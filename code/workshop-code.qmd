@@ -1,8 +1,8 @@
 ---
 title: "Workshop 8 TEMPLATE"
-subtitle: "insert your section time here"
-author: "insert your name here"
-date: "insert your name here"
+subtitle: "12 PM"
+author: "Valentina Caro"
+date: "02-27-2026"
 format:
   html:
     toc: true # use this to display a table of contents
@@ -17,7 +17,7 @@ In this workshop, we will answer the question: How do specific leaf area, water 
 
 **Water treatment** is a categorical variable (i.e. a *factor*) with 2 levels: drought stressed (DS) and well watered (WW).  
 
-**Species** is a categorical variable (again, a *factor*) with 6 levels.  
+**Species** is a categorical variable (again, a *factor*) with 7 levels.  
 
 | Species name                 | Species code | Common name        |
 |------------------------------|--------------|--------------------|
@@ -45,7 +45,13 @@ library(MuMIn) # model selection
 
 # read in your data here
 
-
+drought_exp <- read_xlsx(
+  here(
+    "data",
+    "Valliere_etal_EcoApps_Data.xlsx"
+),
+sheet = "First Harvest"
+)
 
 ```
 
@@ -77,11 +83,11 @@ Data source: Valliere, Justin; Zhang, Jacqueline; Sharifi, M.; Rundel, Philip (2
 ```{r}
 #| label: data cleaning
 
-# 
-drought_exp_clean <- drought_exp 
-  # 
-  clean_names() 
-  # 
+# making a new data frame from original data frame
+drought_exp_clean <- drought_exp |> 
+  # clean names
+  clean_names() |> 
+  # change species code to scientific name
   mutate(species_name = case_match(
     species,
     "ENCCAL" ~ "Encelia californica", # bush sunflower
@@ -91,14 +97,16 @@ drought_exp_clean <- drought_exp
     "SALLEU" ~ "Salvia leucophylla", # purple sage
     "STIPUL" ~ "Stipa pulchra", # purple needlegrass
     "LOTSCO" ~ "Lotus scoparius" # deerweed
-  )) 
-  # 
+  )) |> 
+  # water treatment column creation with well watered and drought stressed
   mutate(water_treatment = case_match(
     water,
     "WW" ~ "Well watered",
     "DS" ~ "Drought stressed"
-  ))  
-  # 
+  ))  |> 
+  # make species a factor
+  # relevel gives order
+  # make the categorical variable water treatment a factor so it can be used in models
   mutate(species_name = as_factor(species_name),
          species_name = fct_relevel(species_name,
                                     "Lotus scoparius",
@@ -107,12 +115,12 @@ drought_exp_clean <- drought_exp
                                     "Encelia californica",
                                     "Stipa pulchra",
                                     "Eschscholzia californica",
-                                    "Grindelia camporum")) 
+                                    "Grindelia camporum")) |> 
   mutate(water_treatment = as_factor(water_treatment),
          water_treatment = fct_relevel(water_treatment,
                                        "Drought stressed",
-                                       "Well watered")) 
-  #
+                                       "Well watered")) |> 
+  # select 4 columns as variables
   select(species_name, water_treatment, sla, total_g)
 ```
 
