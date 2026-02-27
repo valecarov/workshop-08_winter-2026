@@ -264,34 +264,44 @@ ggplot(data = drought_exp_clean,
 | 6            |     |       X         |         | water treatment             |    
 | 7            |     |                 |    X    | species                     |
 
-## Model fitting
+## Model 
+
+
 
 ```{r}
 #| label: model fitting
 
 # model 0: null model
-
+model0 <- lm(total_g ~ 1,
+              data = drought_exp_clean)
 
 # model 1: all predictors
-
+model1 <- lm(total_g ~ sla + water_treatment + species_name,
+              data = drought_exp_clean)
 
 # model 2: SLA and water treatment
-
+model2 <- lm(total_g ~ sla + water_treatment,
+              data = drought_exp_clean)
 
 # model 3: SLA and species
-
+model3 <- lm(total_g ~ sla + species_name,
+              data = drought_exp_clean)
 
 # model 4: water treatment and species
-
+model4 <- lm(total_g ~ water_treatment + species_name,
+             data = drought_exp_clean)
 
 # model 5: SLA
-
+model5 <- lm(total_g ~ sla,
+             data = drought_exp_clean)
 
 # model 6: water treatment
-
+model6 <- lm(total_g ~ water_treatment,
+             data = drought_exp_clean)
 
 # model 7: species
-
+model7 <- lm(total_g ~ species_name,
+             data = drought_exp_clean)
 ```
 
 ## Model selection
@@ -301,56 +311,91 @@ Insert code to use the `AICc()` function to calculate the AIC for each model.
 Arrange by decreasing AIC.
 
 
+```{r}
+#| label: AIC Model Selection
 
+AICc(
+  model0,
+  model1,
+  model2,
+  model3,
+  model4,
+  model5,
+  model6,
+  model7
+) |> 
+  arrange(AICc)
+
+```
+
+
+The best model is model 4: the one that includes only water treatment and species
 
 ## Model diagnostics
 
 Insert code to look at the diagnostic plots for the best model.
 
+```{r}
+#| label: Residual plots for model 4
 
+par(mfrow = c(2,2)) # display our plots in a 2x2 grid
+plot(model4) # plot model 4 diagnostics
 
+```
+
+Diagnostic plots look good.
+
+Residuals (standing in for errors) look normally distributed based on qq plot. 
+Residuals look homoscedastic (have constant variance) based on residuals vs fitted plot and scale location plot. 
+
+No outliers influencing model estimates of coefficients
 
 
 ## Summary
 
 Insert code to display the summary for the best model. 
 
+```{r}
+
+summary(model4)
+
+```
 
 
 **What are the reference levels?**  
 
-
+Drought treatment and Lotus scoparius because they are not listed in the summary output
 
 **What does the `(Intercept)` represent?**  
 
-
+The estimated mass for drought stressed lotus scoparius (0.055 +/- 0.02(SE) g)
 
 **What does `water_treatmentWell watered` represent?**
 
-
+This is the model prediction for the difference in Lotus scoparius mass between the well watered and drought stressed treatments. The model predicts the difference is 0.12 +/- 0.02 (SE) g
 
 **What does `species_namePenstemon centranthifolius` represent?**  
 
-
+This is the model prediction for the difference between Penstemon centranthifolius mass in the well watered treatment and Lotus scoparius mass in the well watered treatment. The model predicts that this difference is 0.05 +/- 0.03 (SE) g.
 
 **What does `species_nameEschscholzia californica` represent?**
 
-
+This is the model prediction for the difference between Eschscholzia californica mass in the well watered treatment and Lotus scoparius mass in the well watered treatment. The model predicts that this difference is 0.23 +/- 0.03 (SE) g.
 
 
 ## Stop and think: what does this model mean?  
 
 **What is the best model?**
 
-[insert your response here]
+[The best model includes water treatment and species as predictors]
 
 **How much variation in the response (total mass, in grams) does this model explain?**
 
-[insert your response here]
+[This model explains 72.57% of the variation in plant mass.]
 
 **How do we interpret the effects of the predictors on the response variable (again, total mass in grams)?**
 
-[insert your response here]
+[Species and water treatment influence plant mass]
 
 # 4. Model predictions
 
